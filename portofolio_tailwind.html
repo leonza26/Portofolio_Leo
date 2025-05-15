@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Portfolio</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-900 text-white sticky top-0 z-50 shadow">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-center gap-8 text-sm md:text-base font-medium">
+      <a href="#home" class="hover:text-blue-400">Home</a>
+      <a href="#about" class="hover:text-blue-400">About</a>
+      <a href="#skills" class="hover:text-blue-400">Skills</a>
+      <a href="#projects" class="hover:text-blue-400">Projects</a>
+      <a href="#experience" class="hover:text-blue-400">Experience</a>
+      <a href="#contact" class="hover:text-blue-400">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="home" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 text-white text-center px-4" data-aos="fade-in">
+    <div>
+      <h1 class="text-4xl md:text-6xl font-bold mb-4">Hi, I'm Your Name</h1>
+      <p class="text-xl">Tech Enthusiast • IT Support • Web Developer</p>
+    </div>
+  </section>
+
+  <!-- My Picture Section -->
+  <section id="mypict" class="section max-w-4xl mx-auto text-center py-16" data-aos="fade-up">
+    <h2 class="text-3xl font-bold mb-4">My Picture</h2>
+    <img src="1e42717d-70a9-470e-b7c4-447d67bc8501.png" alt="My Photo" class="mx-auto rounded-full w-48 h-48 object-cover shadow-lg border-4 border-blue-500" />
+  </section>
+
+  <!-- About -->
+  <section id="about" class="section max-w-4xl mx-auto" data-aos="fade-up">
+    <h2 class="text-3xl font-bold mb-4">About Me</h2>
+    <p>I’m passionate about IT and love creating clean, functional solutions. I’ve worked on Laravel projects, machine learning, and computer vision.</p>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills" class="section bg-white" data-aos="fade-up">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold mb-4">Skills</h2>
+      <ul class="list-disc list-inside space-y-2">
+        <li>Laravel, PHP</li>
+        <li>Tailwind, Bootstrap</li>
+        <li>Python, YOLO, CNN</li>
+        <li>IT Support & Networking</li>
+        <li>WordPress & CMS</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="section" data-aos="fade-up">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl font-bold mb-10 text-center">Projects</h2>
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <!-- Project Card -->
+        <div class="bg-white p-6 rounded-lg shadow" data-aos="zoom-in">
+          <h3 class="text-xl font-bold">E-commerce Laravel</h3>
+          <p class="text-sm text-gray-600">Penjualan sepatu dengan Midtrans dan dashboard admin.</p>
+        </div>
+        <!-- Tambahkan lebih banyak project sesuai kebutuhan -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience -->
+  <section id="experience" class="section bg-gray-100" data-aos="fade-up">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold mb-4">Experience</h2>
+      <p>Junior IT Support at Yayasan Sekolah — handling hardware/software issues, designing media content, and ensuring network operations.</p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="section text-center" data-aos="fade-up">
+    <h2 class="text-3xl font-bold mb-4">Contact</h2>
+    <p>📧 yourname@email.com</p>
+    <p>📱 +62 812-3456-7890</p>
+    <p>💼 <a href="https://linkedin.com/in/yourname" class="text-blue-600 hover:underline">LinkedIn</a></p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white text-center py-4">
+    <p>&copy; 2025 Your Name. All rights reserved.</p>
+  </footer>
+
+  <!-- AOS Script -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init({ once: true, duration: 800 });</script>
+
+</body>
+</html>
