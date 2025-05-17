@@ -482,21 +482,26 @@
                     <a href="https://www.tiktok.com/@ban__leon" target="_blank"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
-            <form class="contact-form">
+
+            <form class="contact-form" id="my-form" method="POST" 
+            action="https://script.google.com/macros/s/AKfycbxX2LSP_1nVOErP7THvviNBN5F4_5u23F2jKM6mcGgMGD0y34sT-R-VnQbPcO5u5bWJZA/exec">
+
                 <div class="form-group">
-                    <input type="text" placeholder="Your Name" required>
+                    <input type="text" placeholder="Your Name" name="Username" required>
                 </div>
                 <div class="form-group">
-                    <input type="email" placeholder="Your Email" required>
+                    <input type="email" placeholder="Your Email" name="Email" required>
                 </div>
                 <div class="form-group">
-                    <input type="text" placeholder="Subject">
+                    <input type="text" placeholder="Subject" name="Subject">
                 </div>
                 <div class="form-group">
-                    <textarea placeholder="Your Message" required></textarea>
+                    <textarea placeholder="Your Message" name="Message" required></textarea>
                 </div>
                 <button type="submit" class="btn primary">Send Message</button>
+                
             </form>
+
         </div>
     </section>
 

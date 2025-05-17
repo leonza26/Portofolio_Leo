@@ -328,13 +328,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Form submission
-    const contactForm = document.querySelector('.contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Here you would typically send the form data to a server
-            alert('Thank you for your message! I will get back to you soon.');
-            this.reset();
+    window.addEventListener("load", function() {
+        const form = document.getElementById('my-form');
+        form.addEventListener("submit", function(e) {
+          e.preventDefault();
+          const data = new FormData(form);
+          const action = e.target.action;
+          fetch(action, {
+            method: 'POST',
+            body: data,
+          })
+          .then(() => {
+            alert("Message Sent!");
+          })
         });
-    }
+      });
+      
 });
