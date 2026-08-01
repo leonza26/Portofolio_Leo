@@ -1,332 +1,338 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Current year for footer
-    document.getElementById('year').textContent = new Date().getFullYear();
-    
-    // Mobile menu toggle
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    
-    menuToggle.addEventListener('click', function() {
-        navLinks.classList.toggle('active');
-        this.querySelector('i').classList.toggle('fa-times');
-    });
-    
-    // Smooth scrolling for navigation
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 70,
-                    behavior: 'smooth'
-                });
-                
-                // Close mobile menu if open
-                if (navLinks.classList.contains('active')) {
-                    navLinks.classList.remove('active');
-                    menuToggle.querySelector('i').classList.remove('fa-times');
-                }
+    // 1. Footer Year
+    const yearEl = document.getElementById('year');
+    if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+    }
+
+    // 2. Scroll Reveal Animation
+    const revealObserverOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
             }
         });
-    });
-    
-    // Navbar scroll effect
-    window.addEventListener('scroll', function() {
-        const navbar = document.querySelector('.glass-nav');
-        if (window.scrollY > 50) {
+    }, revealObserverOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    // 3. Smart Navbar
+    const navbar = document.getElementById('navbar');
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener('scroll', () => {
+        if (!navbar) return;
+        const currentScrollY = window.scrollY;
+
+        if (currentScrollY > 80) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
         }
+
+        if (currentScrollY > 200 && currentScrollY > lastScrollY) {
+            // Scrolling down
+            navbar.classList.add('hidden');
+        } else {
+            // Scrolling up
+            navbar.classList.remove('hidden');
+        }
+
+        lastScrollY = currentScrollY;
     });
-    
-    // Project filter
+
+    // 4. Active Nav Link Tracking
+    const sections = ['home', 'projects', 'gallery', 'skills', 'about', 'contact'].map(id => document.getElementById(id)).filter(Boolean);
+    const navItems = document.querySelectorAll('.nav-links a');
+
+    window.addEventListener('scroll', () => {
+        let currentSectionId = '';
+        const scrollPosition = window.scrollY + 150; // offset
+
+        sections.forEach(section => {
+            if (section.offsetTop <= scrollPosition && (section.offsetTop + section.offsetHeight) > scrollPosition) {
+                currentSectionId = section.getAttribute('id');
+            }
+        });
+
+        navItems.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${currentSectionId}`) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+    // 5. Mobile Menu Toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+            navToggle.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        navItems.forEach(link => {
+            link.addEventListener('click', () => {
+                navToggle.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+    }
+
+    // 6. Smooth Scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                const navbarHeight = navbar ? navbar.offsetHeight : 80;
+                const offsetPosition = targetElement.offsetTop - navbarHeight;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // 7. Project Filter
     const filterBtns = document.querySelectorAll('.filter-btn');
     const projectCards = document.querySelectorAll('.project-card');
-    
+
     filterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Update active button
+        btn.addEventListener('click', () => {
             filterBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            
-            const filter = this.getAttribute('data-filter');
-            
-            // Filter projects
+            btn.classList.add('active');
+
+            const filterValue = btn.getAttribute('data-filter');
+
             projectCards.forEach(card => {
-                if (filter === 'all' || card.getAttribute('data-category') === filter) {
-                    card.style.display = 'block';
-                    card.style.animation = 'fadeIn 0.5s ease forwards';
+                const category = card.getAttribute('data-category');
+                if (filterValue === 'all' || filterValue === category) {
+                    card.style.display = '';
+                    // Trigger animation
+                    card.style.animation = 'none';
+                    card.offsetHeight; /* trigger reflow */
+                    card.style.animation = 'fadeInUp 0.5s ease forwards';
                 } else {
                     card.style.display = 'none';
                 }
             });
         });
     });
-    
-    // Gallery functionality
+
+    // 8. Gallery System
     const galleryData = [
-        {
-            id: 1,
-            title: "Graduation",
-            description: "Informatics Engineering graduation moment, marking the start of my IT career.",
-            image: "img/DSC01736.jpg",
-            category: "design"
-        },
-        {
-            id: 2,
-            title: "Graduation",
-            description: "Informatics Engineering graduation moment, marking the start of my IT career.",
-            image: "img/DSC01705.jpg",
-            category: "design"
-        },
-        {
-            id: 3,
-            title: "Graduation",
-            description: "Informatics Engineering graduation moment, marking the start of my IT career.",
-            image: "img/DSC01731.jpg",
-            category: "development"
-        },
-        {
-            id: 4,
-            title: "Relaxed Photo",
-            description: "cool casual photos",
-            image: "img/1.jpg",
-            category: "design"
-        },
-        {
-            id: 5,
-            title: "Organization Photo",
-            description: "Personal portrait while active in campus organizations.",
-            image: "img/7.jpg",
-            category: "photography"
-        },
-        {
-            id: 6,
-            title: "Graduation",
-            description: "Informatics Engineering graduation moment, marking the start of my IT career.",
-            image: "img/DSC01681.jpg",
-            category: "development"
-        },
-        {
-            id: 7,
-            title: "Organization Photo",
-            description: "Personal portrait while active in campus organizations.",
-            image: "img/3.jpg",
-            category: "photography"
-        },
-        {
-            id: 8,
-            title: "Graduation",
-            description: "Informatics Engineering graduation moment, marking the start of my IT career.",
-            image: "img/OPA00044.jpg",
-            category: "development"
-        }
+        { id: 1, title: 'Graduation', description: 'Informatics Engineering graduation moment, marking the start of my IT career.', image: 'img/DSC01736.jpg' },
+        { id: 2, title: 'Graduation', description: 'Informatics Engineering graduation moment, marking the start of my IT career.', image: 'img/DSC01705.jpg' },
+        { id: 3, title: 'Graduation', description: 'Informatics Engineering graduation moment, marking the start of my IT career.', image: 'img/DSC01731.jpg' },
+        { id: 4, title: 'Relaxed Photo', description: 'Cool casual photos', image: 'img/1.jpg' },
+        { id: 5, title: 'Organization Photo', description: 'Personal portrait while active in campus organizations.', image: 'img/7.jpg' },
+        { id: 6, title: 'Graduation', description: 'Informatics Engineering graduation moment, marking the start of my IT career.', image: 'img/DSC01681.jpg' },
+        { id: 7, title: 'Organization Photo', description: 'Personal portrait while active in campus organizations.', image: 'img/3.jpg' },
+        { id: 8, title: 'Graduation', description: 'Informatics Engineering graduation moment, marking the start of my IT career.', image: 'img/OPA00044.jpg' }
     ];
 
-    const galleryGrid = document.querySelector('.gallery-grid');
-    const galleryFilterBtns = document.querySelectorAll('.gallery-filter-btn');
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.querySelector('.lightbox-img');
-    const lightboxClose = document.querySelector('.lightbox-close');
-    const prevBtn = document.querySelector('.prev');
-    const nextBtn = document.querySelector('.next');
-
-    // Render gallery items
-    function renderGallery(items) {
-        galleryGrid.innerHTML = '';
-        items.forEach(item => {
+    const galleryGrid = document.getElementById('galleryGrid');
+    if (galleryGrid) {
+        galleryData.forEach(item => {
             const galleryItem = document.createElement('div');
-            galleryItem.className = 'gallery-item';
-            galleryItem.setAttribute('data-category', item.category);
-            galleryItem.setAttribute('data-id', item.id);
+            galleryItem.className = 'gallery-item reveal';
             galleryItem.innerHTML = `
-                <img src="${item.image}" alt="${item.title}" class="gallery-img">
+                <img src="${item.image}" alt="${item.title}" loading="lazy">
                 <div class="gallery-overlay">
-                    <h3 class="gallery-title">${item.title}</h3>
-                    <p class="gallery-description">${item.description}</p>
+                    <h3>${item.title}</h3>
+                    <p>${item.description}</p>
                 </div>
             `;
+            
+            galleryItem.addEventListener('click', () => openLightbox(item.id));
             galleryGrid.appendChild(galleryItem);
-
-            // Add click event to open lightbox
-            galleryItem.addEventListener('click', () => {
-                openLightbox(item.id);
-            });
+            revealObserver.observe(galleryItem);
         });
     }
 
-    // Filter gallery items
-    galleryFilterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Update active button
-            galleryFilterBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            
-            const filter = this.getAttribute('data-filter');
-            
-            // Filter gallery items
-            if (filter === 'all') {
-                renderGallery(galleryData);
-            } else {
-                const filteredItems = galleryData.filter(item => item.category === filter);
-                renderGallery(filteredItems);
-            }
-        });
-    });
+    // 9. Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+    let currentLightboxIndex = 0;
 
-    // Lightbox functionality
     function openLightbox(id) {
-        const item = galleryData.find(item => item.id == id);
-        if (item) {
-            lightboxImg.src = item.image;
-            lightboxImg.alt = item.title;
-            lightboxImg.setAttribute('data-id', item.id);
-            lightbox.classList.add('show');
-            document.body.style.overflow = 'hidden';
+        const itemIndex = galleryData.findIndex(item => item.id === id);
+        if (itemIndex > -1) {
+            currentLightboxIndex = itemIndex;
+            updateLightboxContent();
+            if (lightbox) {
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
         }
     }
 
     function closeLightbox() {
-        lightbox.classList.remove('show');
-        document.body.style.overflow = 'auto';
+        if (lightbox) {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     }
 
     function navigateLightbox(direction) {
-        const currentId = parseInt(lightboxImg.getAttribute('data-id') || galleryData[0].id);
-        let currentIndex = galleryData.findIndex(item => item.id === currentId);
-        
         if (direction === 'prev') {
-            currentIndex = (currentIndex - 1 + galleryData.length) % galleryData.length;
+            currentLightboxIndex = (currentLightboxIndex - 1 + galleryData.length) % galleryData.length;
         } else {
-            currentIndex = (currentIndex + 1) % galleryData.length;
+            currentLightboxIndex = (currentLightboxIndex + 1) % galleryData.length;
         }
-        
-        const item = galleryData[currentIndex];
-        lightboxImg.src = item.image;
-        lightboxImg.alt = item.title;
-        lightboxImg.setAttribute('data-id', item.id);
+        updateLightboxContent();
     }
 
-    lightboxClose.addEventListener('click', closeLightbox);
-    prevBtn.addEventListener('click', () => navigateLightbox('prev'));
-    nextBtn.addEventListener('click', () => navigateLightbox('next'));
-
-    // Close lightbox when clicking outside
-    lightbox.addEventListener('click', function(e) {
-        if (e.target === lightbox) {
-            closeLightbox();
+    function updateLightboxContent() {
+        const item = galleryData[currentLightboxIndex];
+        if (lightboxImg && item) {
+            lightboxImg.src = item.image;
+            lightboxImg.alt = item.title;
+            lightboxImg.setAttribute('data-id', item.id);
         }
-    });
+    }
 
-    // Keyboard navigation for lightbox
-    document.addEventListener('keydown', function(e) {
-        if (lightbox.classList.contains('show')) {
-            if (e.key === 'Escape') {
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+    if (lightboxPrev) lightboxPrev.addEventListener('click', () => navigateLightbox('prev'));
+    if (lightboxNext) lightboxNext.addEventListener('click', () => navigateLightbox('next'));
+    
+    if (lightbox) {
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
                 closeLightbox();
-            } else if (e.key === 'ArrowLeft') {
-                navigateLightbox('prev');
-            } else if (e.key === 'ArrowRight') {
-                navigateLightbox('next');
             }
-        }
-    });
-
-    // Initialize gallery
-    renderGallery(galleryData);
-
-    // Animate skill bars when section is in view
-    const skillBars = document.querySelectorAll('.bar-fill');
-    
-    function animateSkillBars() {
-        skillBars.forEach(bar => {
-            const skillLevel = bar.parentElement.getAttribute('data-level');
-            bar.style.width = skillLevel + '%';
         });
     }
-    
-    // Intersection Observer for skill bars animation
-    const skillsSection = document.querySelector('.skills');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                animateSkillBars();
-                observer.unobserve(entry.target);
+
+    document.addEventListener('keydown', (e) => {
+        if (!lightbox || !lightbox.classList.contains('active')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') navigateLightbox('prev');
+        if (e.key === 'ArrowRight') navigateLightbox('next');
+    });
+
+    // 10. Skill Bars Animation
+    const skillsGrid = document.querySelector('.skills-grid');
+    if (skillsGrid) {
+        const skillsObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const skillFills = entry.target.querySelectorAll('.skill-fill');
+                    skillFills.forEach(fill => {
+                        const item = fill.closest('.skill-item');
+                        const level = item ? item.getAttribute('data-level') : null;
+                        if (level) {
+                            fill.style.width = level + '%';
+                        }
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+        skillsObserver.observe(skillsGrid);
+    }
+
+    // 11. Project Modal
+    const projectModal = document.getElementById('projectModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalBody = document.getElementById('modalBody');
+
+    projectCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('a')) return;
+
+            const img = card.querySelector('img');
+            const title = card.querySelector('h3');
+            const desc = card.querySelector('p');
+            const techWrap = card.querySelector('.project-tags');
+            const linksWrap = card.querySelector('.project-links');
+
+            if (modalBody) {
+                modalBody.innerHTML = `
+                    <img src="${img ? img.src : ''}" alt="${title ? title.textContent : ''}" class="modal-img">
+                    <h3 class="modal-title">${title ? title.textContent : ''}</h3>
+                    <p class="modal-description">${desc ? desc.textContent : ''}</p>
+                    <div class="modal-tech">${techWrap ? techWrap.innerHTML : ''}</div>
+                    <div class="modal-links">${linksWrap ? linksWrap.innerHTML : ''}</div>
+                `;
+            }
+
+            if (projectModal) {
+                projectModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
             }
         });
-    }, { threshold: 0.5 });
-    
-    observer.observe(skillsSection);
-    
-    // Project modal functionality
-    const projectModal = document.getElementById('projectModal');
-    const closeModal = document.querySelector('.close-modal');
-    
-    // Close modal when clicking X
-    closeModal.addEventListener('click', function() {
-        projectModal.classList.remove('show');
     });
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', function(e) {
-        if (e.target === projectModal) {
-            projectModal.classList.remove('show');
+
+    if (modalClose) {
+        modalClose.addEventListener('click', () => {
+            if (projectModal) {
+                projectModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    if (projectModal) {
+        projectModal.addEventListener('click', (e) => {
+            if (e.target === projectModal) {
+                projectModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && projectModal && projectModal.classList.contains('active')) {
+            projectModal.classList.remove('active');
+            document.body.style.overflow = '';
         }
     });
-    
-    // Add click event to project cards to open modal
-    document.querySelectorAll('.project-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            // Don't open modal if clicking on a link
-            if (e.target.closest('a')) return;
-            
-            const img = this.querySelector('.project-img');
-            const info = this.querySelector('.project-info');
-            const title = info.querySelector('h3').textContent;
-            const description = info.querySelector('p').textContent;
-            const tags = Array.from(info.querySelectorAll('.project-tag')).map(tag => tag.textContent);
-            const links = Array.from(info.querySelectorAll('.project-links a'));
-            
-            const modalBody = document.querySelector('.modal-body');
-            modalBody.innerHTML = `
-                <img src="${img.src}" alt="${title}" class="modal-img">
-                <h3 class="modal-title">${title}</h3>
-                <p class="modal-description">${description}</p>
-                <div class="modal-tech">
-                    ${tags.map(tag => `<span>${tag}</span>`).join('')}
-                </div>
-                <div class="modal-links">
-                    ${links.map(link => {
-                        const href = link.getAttribute('href');
-                        const target = link.target ? 'target="' + link.target + '"' : '';
-                        return `<a href="${href}" ${target} class="live">${link.innerHTML}</a>`;
-                    }).join('')}
-                </div>
-            `;
-            
-            projectModal.classList.add('show');
+
+    // 12. Contact Form
+    const myForm = document.getElementById('my-form');
+    if (myForm) {
+        myForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(myForm);
+            const action = myForm.getAttribute('action');
+
+            if (action) {
+                fetch(action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        alert('Message Sent!');
+                        myForm.reset();
+                    } else {
+                        alert('Failed to send message. Please try again.');
+                    }
+                }).catch(error => {
+                    alert('Failed to send message. Please try again.');
+                });
+            }
         });
-    });
-    
-    // Form submission
-    window.addEventListener("load", function() {
-        const form = document.getElementById('my-form');
-        form.addEventListener("submit", function(e) {
-          e.preventDefault();
-          const data = new FormData(form);
-          const action = e.target.action;
-          fetch(action, {
-            method: 'POST',
-            body: data,
-          })
-          .then(() => {
-            alert("Message Sent!");
-          })
-        });
-      });
-      
+    }
 });
