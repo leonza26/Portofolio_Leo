@@ -703,12 +703,12 @@ section {
 /* frontend */
 .html { --data-level: 95; }
 .css { --data-level: 80; }
-.js { --data-level: 75; }
+.js { --data-level: 70; }
 
 /* Backend */
-.PHP { --data-level: 75; }
-.python { --data-level: 70; }
-.sql { --data-level: 65; }
+.PHP { --data-level: 80; }
+.python { --data-level: 85; }
+.sql { --data-level: 85; }
 
 /* AI */
 .ML { --data-level: 80; }

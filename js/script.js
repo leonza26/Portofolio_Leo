@@ -185,6 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (item) {
             lightboxImg.src = item.image;
             lightboxImg.alt = item.title;
+            lightboxImg.setAttribute('data-id', item.id);
             lightbox.classList.add('show');
             document.body.style.overflow = 'hidden';
         }
@@ -277,53 +278,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Sample project data (replace with your actual projects)
-    const projects = [
-        {
-            id: 1,
-            title: "E-commerce Website",
-            description: "A fully responsive e-commerce platform with cart functionality and payment integration. Built with React, Node.js, and MongoDB. Features include product filtering, user authentication, and order tracking.",
-            image: "https://via.placeholder.com/800x500",
-            tags: ["React", "Node.js", "MongoDB", "Redux"],
-            liveLink: "#",
-            codeLink: "#",
-            category: "web"
-        },
-        {
-            id: 2,
-            title: "Fitness Tracker App",
-            description: "Mobile application for tracking workouts and nutrition with personalized recommendations. Includes features like workout logging, progress tracking, and meal planning.",
-            image: "https://via.placeholder.com/800x500",
-            tags: ["React Native", "Firebase", "Expo"],
-            liveLink: "#",
-            codeLink: "#",
-            category: "mobile"
-        }
-    ];
-    
     // Add click event to project cards to open modal
     document.querySelectorAll('.project-card').forEach(card => {
-        card.addEventListener('click', function() {
-            const projectId = this.getAttribute('data-id');
-            const project = projects.find(p => p.id == projectId);
+        card.addEventListener('click', function(e) {
+            // Don't open modal if clicking on a link
+            if (e.target.closest('a')) return;
             
-            if (project) {
-                const modalBody = document.querySelector('.modal-body');
-                modalBody.innerHTML = `
-                    <img src="${project.image}" alt="${project.title}" class="modal-img">
-                    <h3 class="modal-title">${project.title}</h3>
-                    <p class="modal-description">${project.description}</p>
-                    <div class="modal-tech">
-                        ${project.tags.map(tag => `<span>${tag}</span>`).join('')}
-                    </div>
-                    <div class="modal-links">
-                        <a href="${project.liveLink}" class="live" target="_blank"><i class="fas fa-external-link-alt"></i> Live Demo</a>
-                        <a href="${project.codeLink}" class="code" target="_blank"><i class="fab fa-github"></i> View Code</a>
-                    </div>
-                `;
-                
-                projectModal.classList.add('show');
-            }
+            const img = this.querySelector('.project-img');
+            const info = this.querySelector('.project-info');
+            const title = info.querySelector('h3').textContent;
+            const description = info.querySelector('p').textContent;
+            const tags = Array.from(info.querySelectorAll('.project-tag')).map(tag => tag.textContent);
+            const links = Array.from(info.querySelectorAll('.project-links a'));
+            
+            const modalBody = document.querySelector('.modal-body');
+            modalBody.innerHTML = `
+                <img src="${img.src}" alt="${title}" class="modal-img">
+                <h3 class="modal-title">${title}</h3>
+                <p class="modal-description">${description}</p>
+                <div class="modal-tech">
+                    ${tags.map(tag => `<span>${tag}</span>`).join('')}
+                </div>
+                <div class="modal-links">
+                    ${links.map(link => {
+                        const href = link.getAttribute('href');
+                        const target = link.target ? 'target="' + link.target + '"' : '';
+                        return `<a href="${href}" ${target} class="live">${link.innerHTML}</a>`;
+                    }).join('')}
+                </div>
+            `;
+            
+            projectModal.classList.add('show');
         });
     });
     
